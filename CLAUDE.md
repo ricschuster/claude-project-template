@@ -32,6 +32,12 @@ architectural constraints (for example: "business logic stays framework-free
 under `src/core/` so it is unit-testable"). Link to the relevant ADR(s) in
 `docs/decisions/` for the reasoning.}}
 
+## Repo structure
+
+{{Optional: a short map of top-level directories, only if it adds real
+orientation beyond exploring the tree. Keep it brief and expect it to drift;
+when in doubt, explore the tree rather than trusting this section.}}
+
 ## Working rules
 
 - Branch from `main`; one short-lived branch per change. Open a pull request

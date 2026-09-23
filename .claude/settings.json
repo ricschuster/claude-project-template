@@ -25,6 +25,11 @@
       "Bash(gh label *)",
       "Bash(gh api *)",
       "Bash(cat MEMORY.md)"
+    ],
+    "deny": [
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git reset --hard *)"
     ]
   }
 }

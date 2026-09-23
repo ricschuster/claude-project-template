@@ -16,7 +16,11 @@ Add an ADR when:
 
 Use one Markdown file per decision, named:
 
-`YYYY-MM-DD_short-title.md`
+`NNNN-short-title.md`
+
+using the next free zero-padded sequence number (`0001`, `0002`, ...). A
+decision that reverses an earlier one gets its own new-numbered file; mark the
+old one `Superseded by NNNN-...` in its Status line rather than editing it.
 
 Structure:
 
@@ -25,7 +29,7 @@ Structure:
 
 ## Status
 
-Proposed | Accepted | Superseded
+Proposed | Accepted | Superseded by NNNN-...
 
 ## Context
 

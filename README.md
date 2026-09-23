@@ -32,6 +32,13 @@ and Claude Code working rules (`CLAUDE.md`, `.claude/settings.json`).
    authenticated with admin access on the new repo) to set branch protection
    on `main`, enable auto-merge, and create the starter label set. Templates
    do not carry repo settings over, only files, so this step is manual.
+   Note this only lets a PR *request* auto-merge; someone still has to click
+   it. For a solo-maintainer repo where CI is the only real gate, a stronger
+   pattern is a branch ruleset with the owner as a bypass actor plus a small
+   workflow (using a repo-scoped PAT secret, since `GITHUB_TOKEN` cannot push
+   past branch protection) that auto-squash-merges the owner's own green PRs.
+   That is real per-repo setup (a PAT secret to create and rotate), so it is
+   not built into this template by default; add it yourself if you want it.
 8. Add your first ADR to `docs/decisions/` (see `docs/decisions/README.md`
    for the format; `docs/decisions/0001-record-architecture-decisions.md` is
    an example) for the stack choice you just made.
