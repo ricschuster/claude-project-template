@@ -6,27 +6,37 @@
 # template". Requires the GitHub CLI (gh) authenticated with repo admin
 # access.
 #
-# Usage: scripts/bootstrap-repo-settings.sh [owner/repo]
+# Usage: scripts/bootstrap-repo-settings.sh [owner/repo [check ...]]
 # If owner/repo is omitted, it is inferred from the current git remote.
+# Each check is the name of a CI job that must pass before a PR can merge;
+# the default is "repo-hygiene". Once you add your stack's own job (README.md
+# step 6), re-run with both, e.g.:
+#   scripts/bootstrap-repo-settings.sh owner/repo repo-hygiene build
 
 set -euo pipefail
 
 REPO="${1:-$(gh repo view --json nameWithOwner --jq .nameWithOwner)}"
+shift || true
+CHECKS=("$@")
+[ ${#CHECKS[@]} -gt 0 ] || CHECKS=(repo-hygiene)
+CONTEXTS=$(printf '"%s",' "${CHECKS[@]}")
+CONTEXTS="[${CONTEXTS%,}]"
 echo "Bootstrapping settings for $REPO"
 
 echo "Enabling auto-merge..."
 gh api "repos/$REPO" -X PATCH -f allow_auto_merge=true >/dev/null
 
 echo "Setting branch protection on main..."
-# Requires at least one status check context; update the array below once a
-# CI job name is known (for example after adding your stack's own job to
-# .github/workflows/ci.yml). "repo-hygiene" is the job defined in the
-# template's stack-neutral CI workflow.
-gh api "repos/$REPO/branches/main/protection" -X PUT \
-  -f required_status_checks='{"strict":true,"contexts":["repo-hygiene"]}' \
-  -f enforce_admins=false \
-  -f required_pull_request_reviews='{"required_approving_review_count":0}' \
-  -f restrictions=null >/dev/null
+# Sent as a JSON body (--input): `gh api -f` sends every value as a string,
+# which the API rejects for these nested objects.
+gh api "repos/$REPO/branches/main/protection" -X PUT --input - >/dev/null <<JSON
+{
+  "required_status_checks": {"strict": true, "contexts": $CONTEXTS},
+  "enforce_admins": false,
+  "required_pull_request_reviews": {"required_approving_review_count": 0},
+  "restrictions": null
+}
+JSON
 
 echo "Creating labels..."
 declare -A LABELS=(

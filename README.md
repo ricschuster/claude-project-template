@@ -32,19 +32,37 @@ and Claude Code working rules (`CLAUDE.md`, `.claude/settings.json`).
    authenticated with admin access on the new repo) to set branch protection
    on `main`, enable auto-merge, and create the starter label set. Templates
    do not carry repo settings over, only files, so this step is manual.
+   Pass your CI job names as extra arguments (for example
+   `scripts/bootstrap-repo-settings.sh owner/repo repo-hygiene build`) once
+   you have added your stack's job; the default gates on `repo-hygiene` only.
    Note this only lets a PR *request* auto-merge; someone still has to click
-   it. For a solo-maintainer repo where CI is the only real gate, a stronger
-   pattern is a branch ruleset with the owner as a bypass actor plus a small
-   workflow (using a repo-scoped PAT secret, since `GITHUB_TOKEN` cannot push
-   past branch protection) that auto-squash-merges the owner's own green PRs.
-   That is real per-repo setup (a PAT secret to create and rotate), so it is
-   not built into this template by default; add it yourself if you want it.
+   it. For a solo-maintainer repo, see "Solo-maintainer auto-merge" below.
 8. Add your first ADR to `docs/decisions/` (see `docs/decisions/README.md`
    for the format; `docs/decisions/0001-record-architecture-decisions.md` is
    an example) for the stack choice you just made.
 9. Delete this "Using this template" section once done, and replace it with
    real project usage instructions (what the project does for a user, how to
    run it).
+
+## Solo-maintainer auto-merge (optional)
+
+`.github/workflows-optional/` holds two workflows that make the owner's own
+green PRs merge themselves. They are not active until you move them into
+`.github/workflows/`.
+
+- `auto-merge.yml` arms squash auto-merge on PRs opened by the repository
+  owner (never on anyone else's, Dependabot included) and brings the PR level
+  with `main`.
+- `update-branches.yml` updates every armed PR after each push to `main`, so
+  strict "up to date" branch protection does not leave them stuck BEHIND.
+
+One-time setup: create a fine-grained personal access token for this repo only
+(Contents, Pull requests and Workflows: read/write) and store it as the
+`AUTO_MERGE_TOKEN` secret. `GITHUB_TOKEN` cannot be used because GitHub starts
+no workflows for pushes or merges made with it, so the PR's checks would never
+run on the updated branch. Rotate the PAT before it expires. Then drop the
+`push` trigger from `ci.yml`: with strict protection every PR is tested against
+current `main` before it merges.
 
 ## What's included
 
@@ -56,8 +74,8 @@ and Claude Code working rules (`CLAUDE.md`, `.claude/settings.json`).
 - `docs/decisions/`: Architecture Decision Records (ADRs).
 - `docs/handoffs/`: session handoff template for continuity between work
   sessions.
-- `.github/`: issue templates, PR template, Dependabot config, and a
-  stack-neutral CI workflow.
+- `.github/`: issue forms, PR template, Dependabot config, a stack-neutral CI
+  workflow, and optional solo-maintainer auto-merge workflows.
 - `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, `LICENSE`.
 - `scripts/bootstrap-repo-settings.sh`: one-time repo settings setup (branch
   protection, auto-merge, labels) that a template cannot carry over on its
