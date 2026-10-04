@@ -32,6 +32,12 @@ architectural constraints (for example: "business logic stays framework-free
 under `src/core/` so it is unit-testable"). Link to the relevant ADR(s) in
 `docs/decisions/` for the reasoning.}}
 
+## Commands
+
+{{The everyday commands: run, test, lint/typecheck, build. One line each, and
+mark which ones are gates (non-zero exit blocks a merge). Fill in once the
+stack is chosen; `CONTRIBUTING.md` Setup should match.}}
+
 ## Repo structure
 
 {{Optional: a short map of top-level directories, only if it adds real
