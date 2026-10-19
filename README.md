@@ -25,16 +25,16 @@ and Claude Code working rules (`CLAUDE.md`, `.claude/settings.json`).
      `.github/workflows/ci.yml`, alongside the existing stack-neutral
      `repo-hygiene` job (markdown lint, no-em-dash check, docs-structure
      check, workflow lint). Do not replace that job; add another one next to
-     it.
+     it, copying the commented example, and add its name to the `needs` list
+     of the `checks` job. The `changes` job lets a docs-only PR skip it.
    - Add a `package-ecosystem` entry to `.github/dependabot.yml` for your
      package manager (see the commented example there).
 7. Run `scripts/bootstrap-repo-settings.sh` once (requires the GitHub CLI,
    authenticated with admin access on the new repo) to set branch protection
    on `main`, enable auto-merge, and create the starter label set. Templates
    do not carry repo settings over, only files, so this step is manual.
-   Pass your CI job names as extra arguments (for example
-   `scripts/bootstrap-repo-settings.sh owner/repo repo-hygiene build`) once
-   you have added your stack's job; the default gates on `repo-hygiene` only.
+   It gates on the single `checks` job of `ci.yml`, which collects all the
+   others, so adding a stack job later needs no change to branch protection.
    Note this only lets a PR *request* auto-merge; someone still has to click
    it. For a solo-maintainer repo, see "Solo-maintainer auto-merge" below.
 8. Add your first ADR to `docs/decisions/` (see `docs/decisions/README.md`
@@ -60,9 +60,17 @@ One-time setup: create a fine-grained personal access token for this repo only
 (Contents, Pull requests and Workflows: read/write) and store it as the
 `AUTO_MERGE_TOKEN` secret. `GITHUB_TOKEN` cannot be used because GitHub starts
 no workflows for pushes or merges made with it, so the PR's checks would never
-run on the updated branch. Rotate the PAT before it expires. Then drop the
-`push` trigger from `ci.yml`: with strict protection every PR is tested against
-current `main` before it merges.
+run on the updated branch. Rotate the PAT before it expires. `ci.yml` already
+runs on PRs only: with strict protection every PR is tested against current
+`main` before it merges.
+
+## Cache warming (optional)
+
+`.github/workflows-optional/warm-cache.yml` saves a cache from `main`, because
+a PR can read caches saved on `main` but not caches saved by another PR. Use it
+if a CI job downloads something slow on every run. Move it into
+`.github/workflows/`, fill in the two placeholders, and use the same path and
+key in the `actions/cache` step of your CI job.
 
 ## What's included
 
@@ -75,7 +83,8 @@ current `main` before it merges.
 - `docs/handoffs/`: session handoff template for continuity between work
   sessions.
 - `.github/`: issue forms, PR template, Dependabot config, a stack-neutral CI
-  workflow, and optional solo-maintainer auto-merge workflows.
+  workflow (docs-only PRs skip stack jobs, one required `checks` status), and
+  optional solo-maintainer auto-merge and cache-warming workflows.
 - `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, `LICENSE`.
 - `scripts/bootstrap-repo-settings.sh`: one-time repo settings setup (branch
   protection, auto-merge, labels) that a template cannot carry over on its

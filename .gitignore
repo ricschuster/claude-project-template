@@ -10,6 +10,9 @@ node_modules/
 dist/
 coverage/
 *.tsbuildinfo
+__pycache__/
+playwright-report/
+test-results/
 
 # Logs and temp
 *.log

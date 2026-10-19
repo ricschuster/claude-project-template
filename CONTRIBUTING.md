@@ -12,7 +12,12 @@ The workflow is:
 
 ## Setup
 
-TODO: setup and local-run instructions once the stack is chosen.
+TODO: setup and local-run instructions once the stack is chosen. A good shape:
+
+- Prerequisites (tool and version).
+- A short block that installs, runs, and checks. Make its last line the
+  command CI runs, and say so.
+- Pointers to `CLAUDE.md` for anything stack-specific or slow.
 
 ## Conventions
 
