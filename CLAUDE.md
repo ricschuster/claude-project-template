@@ -35,14 +35,17 @@ under `src/core/` so it is unit-testable"). Link to the relevant ADR(s) in
 ## Commands
 
 {{The everyday commands: run, test, lint/typecheck, build. One line each, and
-mark which ones are gates (non-zero exit blocks a merge). Fill in once the
-stack is chosen; `CONTRIBUTING.md` Setup should match.}}
+mark which ones are gates (non-zero exit blocks a merge). Say how long the
+slow ones take and which ones CI skips, so nobody runs a 20 minute suite by
+accident. Fill in once the stack is chosen; `CONTRIBUTING.md` Setup should
+match.}}
 
 ## Repo structure
 
 {{Optional: a short map of top-level directories, only if it adds real
-orientation beyond exploring the tree. Keep it brief and expect it to drift;
-when in doubt, explore the tree rather than trusting this section.}}
+orientation beyond exploring the tree. State layering rules here too, such as "`core/` never imports from `ui/`".
+Keep it brief and expect it to drift; when in doubt, explore the tree rather
+than trusting this section.}}
 
 ## Working rules
 

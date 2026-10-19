@@ -8,17 +8,17 @@
 #
 # Usage: scripts/bootstrap-repo-settings.sh [owner/repo [check ...]]
 # If owner/repo is omitted, it is inferred from the current git remote.
-# Each check is the name of a CI job that must pass before a PR can merge;
-# the default is "repo-hygiene". Once you add your stack's own job (README.md
-# step 6), re-run with both, e.g.:
-#   scripts/bootstrap-repo-settings.sh owner/repo repo-hygiene build
+# Each check is the name of a CI job that must pass before a PR can merge.
+# The default is "checks", the job in ci.yml that gathers all the others, so
+# adding a stack job needs no re-run; list other names only if you want
+# protection on them directly.
 
 set -euo pipefail
 
 REPO="${1:-$(gh repo view --json nameWithOwner --jq .nameWithOwner)}"
 shift || true
 CHECKS=("$@")
-[ ${#CHECKS[@]} -gt 0 ] || CHECKS=(repo-hygiene)
+[ ${#CHECKS[@]} -gt 0 ] || CHECKS=(checks)
 CONTEXTS=$(printf '"%s",' "${CHECKS[@]}")
 CONTEXTS="[${CONTEXTS%,}]"
 echo "Bootstrapping settings for $REPO"

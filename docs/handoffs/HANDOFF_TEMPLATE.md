@@ -1,5 +1,7 @@
 # Session Handoff: YYYY-MM-DD
 
+<!-- Open the handoff PR in the same session. The next session starts by reading the latest file in this folder. -->
+
 ## Summary
 
 One short paragraph: what this session was about and where things stand.
